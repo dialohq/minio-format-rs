@@ -74,7 +74,7 @@ impl VersionType {
 }
 
 /// Complete object metadata parsed from xl.meta
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct ObjectMeta {
     // Object identification
     pub bucket: String,
@@ -123,31 +123,6 @@ impl ObjectMeta {
     /// Total number of shards (data + parity)
     pub fn total_shards(&self) -> usize {
         self.data_blocks + self.parity_blocks
-    }
-}
-
-impl Default for ObjectMeta {
-    fn default() -> Self {
-        Self {
-            bucket: String::new(),
-            key: String::new(),
-            version_type: VersionType::default(),
-            version_id: Uuid16::default(),
-            data_dir: Uuid16::default(),
-            data_blocks: 0,
-            parity_blocks: 0,
-            block_size: 0,
-            erasure_index: 0,
-            distribution: Vec::new(),
-            parts: Vec::new(),
-            size: 0,
-            mod_time: 0,
-            etag: String::new(),
-            content_type: String::new(),
-            user_meta: HashMap::new(),
-            pool_index: 0,
-            set_index: 0,
-        }
     }
 }
 

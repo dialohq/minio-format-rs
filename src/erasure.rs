@@ -213,8 +213,8 @@ fn decode_block(
 
     // Concatenate data shards
     let mut block_data = Vec::with_capacity(data_blocks * max_size);
-    for i in 0..data_blocks {
-        if let Some(ref shard_data) = rs_shards[i] {
+    for (i, shard) in rs_shards.iter().enumerate().take(data_blocks) {
+        if let Some(ref shard_data) = shard {
             block_data.extend_from_slice(shard_data);
         } else {
             bail!("data shard {} still missing after reconstruction", i);
@@ -320,7 +320,7 @@ mod tests {
         }];
 
         let result = decode_object(&reader, &meta, &[]).unwrap();
-        assert_eq!(result.len(), (shard_size * data_blocks) as usize);
+        assert_eq!(result.len(), shard_size * data_blocks);
         assert_eq!(&result[0..4], &shard0_data);
         assert_eq!(&result[4..8], &shard1_data);
     }
