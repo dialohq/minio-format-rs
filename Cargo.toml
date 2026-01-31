@@ -1,0 +1,26 @@
+[package]
+name = "minio-format"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+description = "Parser for MinIO internal formats (xl.meta, format.json, erasure-coded shards)"
+license = "MIT"
+repository = "https://github.com/dialohq/minio-format-rs"
+documentation = "https://docs.rs/minio-format"
+homepage = "https://github.com/dialohq/minio-format-rs"
+readme = "README.md"
+keywords = ["minio", "s3", "parser", "erasure-coding", "storage"]
+categories = ["parsing", "filesystem", "encoding"]
+
+[dependencies]
+anyhow = "1"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rmp = "0.8"
+reed-solomon-erasure = { version = "6", features = ["simd-accel"] }
+highway = "1"
+xxhash-rust = { version = "0.8", features = ["xxh64"] }
+
+[dev-dependencies]
+tempfile = "3"
