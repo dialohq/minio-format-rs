@@ -7,6 +7,14 @@
 
 A Rust library for parsing MinIO's internal data formats. This enables direct access to MinIO object storage data without going through the S3 API, useful for data recovery, migration, forensics, and building custom storage tools.
 
+## Use case
+
+This was completely vibe-coded to facilitate our migration from MinIO to another object storage solution. MinIO was prohibitively slow to conduct a multi-terabyte migration so I created this and [another tool](https://github.com/dialohq/fxfsp) to complete the migration.
+
+MinIO **inflates the number of fs entries by 4-6x** (i.e. for every file consisting of n shards, there are n*4 filesystem entries). Turns out this really matters for performance. A fileystem like xfs is effectively a tree and navigating it is extremely slow. A movement of the head on a HDD takes 2-8ms. This slows down the reads incredibly. For our pipeline I created the parser and a minio parser in order to get the filesystem metadata and put it in clickhouse. Then I created an s3 api compatible server that reads the file locations from clickhouse instead of FS which makes it all much faster.
+
+You might have your own use case but I strongly recommend moving off of MinIO. It was created by people who don't know what they are doing for people who don't know what they are doing (i.e. me in the past).
+
 ## Features
 
 - **xl.meta parsing** - Parse MinIO's binary metadata format (msgpack-based) to extract object metadata, erasure coding parameters, and version information
