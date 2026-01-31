@@ -150,8 +150,7 @@ fn decode_block(
         let shard_data = reader
             .read_shard(disk_idx, &meta.bucket, &meta.key, data_dir, part_number)
             .ok()??;
-        shard::read_shard_block(&shard_data, block_index, shard_size, true)
-            .ok()?
+        shard::read_shard_block(&shard_data, block_index, shard_size, true).ok()?
     };
 
     // Step 1: Read only data shards (first data_blocks)
@@ -253,18 +252,14 @@ mod tests {
         let reader = FsShardReader {
             disk_paths: vec!["/nonexistent".into()],
         };
-        let result = reader
-            .read_shard(0, "bucket", "key", "datadir", 1)
-            .unwrap();
+        let result = reader.read_shard(0, "bucket", "key", "datadir", 1).unwrap();
         assert!(result.is_none());
     }
 
     #[test]
     fn test_fs_shard_reader_disk_index_out_of_range() {
         let reader = FsShardReader { disk_paths: vec![] };
-        let result = reader
-            .read_shard(5, "bucket", "key", "datadir", 1)
-            .unwrap();
+        let result = reader.read_shard(5, "bucket", "key", "datadir", 1).unwrap();
         assert!(result.is_none());
     }
 

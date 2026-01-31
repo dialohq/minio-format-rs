@@ -197,14 +197,20 @@ mod tests {
             0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66,
             0x77, 0x88,
         ]);
-        assert_eq!(uuid.to_uuid_string(), "12345678-9abc-def0-1122-334455667788");
+        assert_eq!(
+            uuid.to_uuid_string(),
+            "12345678-9abc-def0-1122-334455667788"
+        );
     }
 
     #[test]
     fn test_uuid16_zero_bytes() {
         let uuid = Uuid16([0u8; 16]);
         assert!(uuid.is_zero());
-        assert_eq!(uuid.to_uuid_string(), "00000000-0000-0000-0000-000000000000");
+        assert_eq!(
+            uuid.to_uuid_string(),
+            "00000000-0000-0000-0000-000000000000"
+        );
     }
 
     #[test]
@@ -291,7 +297,10 @@ mod tests {
             0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66,
             0x77, 0x88,
         ]);
-        assert_eq!(meta.data_dir_string(), "12345678-9abc-def0-1122-334455667788");
+        assert_eq!(
+            meta.data_dir_string(),
+            "12345678-9abc-def0-1122-334455667788"
+        );
     }
 
     #[test]

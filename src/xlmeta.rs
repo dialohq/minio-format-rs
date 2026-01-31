@@ -79,8 +79,7 @@ fn parse_v1_3(payload: &[u8]) -> Result<ObjectMeta> {
     let mut cur = Cursor::new(payload);
 
     // Read metadata blob (msgpack bin)
-    let blob_len =
-        decode::read_bin_len(&mut cur).context("failed to read metadata blob length")?;
+    let blob_len = decode::read_bin_len(&mut cur).context("failed to read metadata blob length")?;
     let blob_start = cur.position() as usize;
     let blob_end = blob_start + blob_len as usize;
     ensure!(
@@ -126,10 +125,7 @@ fn parse_metadata_blob(blob: &[u8]) -> Result<ObjectMeta> {
     let meta_len = decode::read_bin_len(&mut cur).context("failed to read version meta length")?;
     let meta_start = cur.position() as usize;
     let meta_end = meta_start + meta_len as usize;
-    ensure!(
-        meta_end <= blob.len(),
-        "version meta extends beyond blob"
-    );
+    ensure!(meta_end <= blob.len(), "version meta extends beyond blob");
     let ver_meta = &blob[meta_start..meta_end];
 
     parse_version_meta(ver_meta)
@@ -195,19 +191,16 @@ fn parse_v2_obj(cur: &mut Cursor<&[u8]>, meta: &mut ObjectMeta) -> Result<()> {
                 let _algo = read_u8_value(cur).context("failed to read EcAlgo")?;
             }
             "EcM" => {
-                meta.data_blocks =
-                    read_int(cur).context("failed to read EcM")? as usize;
+                meta.data_blocks = read_int(cur).context("failed to read EcM")? as usize;
             }
             "EcN" => {
-                meta.parity_blocks =
-                    read_int(cur).context("failed to read EcN")? as usize;
+                meta.parity_blocks = read_int(cur).context("failed to read EcN")? as usize;
             }
             "EcBSize" => {
                 meta.block_size = read_i64(cur).context("failed to read EcBSize")?;
             }
             "EcIndex" => {
-                meta.erasure_index =
-                    read_int(cur).context("failed to read EcIndex")? as usize;
+                meta.erasure_index = read_int(cur).context("failed to read EcIndex")? as usize;
             }
             "EcDist" => {
                 let arr_len =
@@ -227,8 +220,8 @@ fn parse_v2_obj(cur: &mut Cursor<&[u8]>, meta: &mut ObjectMeta) -> Result<()> {
                     decode::read_array_len(cur).context("failed to read PartNums header")?;
                 part_numbers = Vec::with_capacity(arr_len as usize);
                 for j in 0..arr_len {
-                    let v = read_int(cur)
-                        .with_context(|| format!("failed to read PartNums[{}]", j))?;
+                    let v =
+                        read_int(cur).with_context(|| format!("failed to read PartNums[{}]", j))?;
                     part_numbers.push(v as i32);
                 }
             }
@@ -275,8 +268,7 @@ fn parse_v2_obj(cur: &mut Cursor<&[u8]>, meta: &mut ObjectMeta) -> Result<()> {
                 }
             }
             _ => {
-                skip_value(cur)
-                    .with_context(|| format!("failed to skip V2Obj field {}", key))?;
+                skip_value(cur).with_context(|| format!("failed to skip V2Obj field {}", key))?;
             }
         }
     }
@@ -636,9 +628,9 @@ fn skip_value(cur: &mut Cursor<&[u8]>) -> Result<()> {
                 skip_value(cur)?;
             }
         }
-        0xd4 => cur.set_position(pos as u64 + 3),  // fixext1
-        0xd5 => cur.set_position(pos as u64 + 4),  // fixext2
-        0xd6 => cur.set_position(pos as u64 + 6),  // fixext4
+        0xd4 => cur.set_position(pos as u64 + 3), // fixext1
+        0xd5 => cur.set_position(pos as u64 + 4), // fixext2
+        0xd6 => cur.set_position(pos as u64 + 6), // fixext4
         0xd7 => cur.set_position(pos as u64 + 10), // fixext8
         0xd8 => cur.set_position(pos as u64 + 18), // fixext16
         0xc7 => {
@@ -683,7 +675,12 @@ fn peek_bytes_2(cur: &Cursor<&[u8]>, offset: usize) -> Result<[u8; 2]> {
 fn peek_bytes_4(cur: &Cursor<&[u8]>, offset: usize) -> Result<[u8; 4]> {
     let data = cur.get_ref();
     ensure!(offset + 4 <= data.len(), "truncated at offset {}", offset);
-    Ok([data[offset], data[offset + 1], data[offset + 2], data[offset + 3]])
+    Ok([
+        data[offset],
+        data[offset + 1],
+        data[offset + 2],
+        data[offset + 3],
+    ])
 }
 
 /// Peek 8 bytes at offset
@@ -691,8 +688,14 @@ fn peek_bytes_8(cur: &Cursor<&[u8]>, offset: usize) -> Result<[u8; 8]> {
     let data = cur.get_ref();
     ensure!(offset + 8 <= data.len(), "truncated at offset {}", offset);
     Ok([
-        data[offset], data[offset + 1], data[offset + 2], data[offset + 3],
-        data[offset + 4], data[offset + 5], data[offset + 6], data[offset + 7],
+        data[offset],
+        data[offset + 1],
+        data[offset + 2],
+        data[offset + 3],
+        data[offset + 4],
+        data[offset + 5],
+        data[offset + 6],
+        data[offset + 7],
     ])
 }
 
@@ -804,7 +807,11 @@ mod tests {
         assert_eq!(meta.erasure_index, 2, "EcIndex should be 2");
 
         // Distribution array (16 disks total: 12 data + 4 parity)
-        assert_eq!(meta.distribution.len(), 16, "should have 16 disks in distribution");
+        assert_eq!(
+            meta.distribution.len(),
+            16,
+            "should have 16 disks in distribution"
+        );
         assert_eq!(
             meta.distribution,
             vec![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1],
@@ -843,7 +850,11 @@ mod tests {
         assert_eq!(meta.erasure_index, 4, "EcIndex should be 4 for disk2");
 
         // Distribution array (5 disks total: 3 data + 2 parity)
-        assert_eq!(meta.distribution.len(), 5, "should have 5 disks in distribution");
+        assert_eq!(
+            meta.distribution.len(),
+            5,
+            "should have 5 disks in distribution"
+        );
         assert_eq!(
             meta.distribution,
             vec![3, 4, 5, 1, 2],
@@ -855,17 +866,18 @@ mod tests {
 
         // Single part with same size
         assert_eq!(meta.parts.len(), 1, "should have 1 part");
-        assert_eq!(meta.parts[0].size, 644520, "part size should match object size");
+        assert_eq!(
+            meta.parts[0].size, 644520,
+            "part size should match object size"
+        );
 
         // Metadata
         assert_eq!(
-            meta.content_type,
-            "application/octet-stream",
+            meta.content_type, "application/octet-stream",
             "content-type should be application/octet-stream"
         );
         assert_eq!(
-            meta.etag,
-            "9587ddd31fead633830366f45d221d56",
+            meta.etag, "9587ddd31fead633830366f45d221d56",
             "etag should match"
         );
 
@@ -897,9 +909,8 @@ mod tests {
 
         for (fixture_path, expected_ec_index) in disks_and_expected_ec_index {
             let data = read_fixture(fixture_path);
-            let meta = parse(&data).unwrap_or_else(|e| {
-                panic!("failed to parse {}: {}", fixture_path, e)
-            });
+            let meta =
+                parse(&data).unwrap_or_else(|e| panic!("failed to parse {}: {}", fixture_path, e));
 
             assert_eq!(
                 meta.erasure_index, expected_ec_index,
@@ -941,13 +952,23 @@ mod tests {
             assert_eq!(meta.data_blocks, 3, "disk{} data_blocks", i + 2);
             assert_eq!(meta.parity_blocks, 2, "disk{} parity_blocks", i + 2);
             assert_eq!(meta.block_size, 1048576, "disk{} block_size", i + 2);
-            assert_eq!(meta.distribution, vec![3, 4, 5, 1, 2], "disk{} distribution", i + 2);
+            assert_eq!(
+                meta.distribution,
+                vec![3, 4, 5, 1, 2],
+                "disk{} distribution",
+                i + 2
+            );
         }
 
         // All versions of this object have same size and etag (object content is the same)
         for (i, meta) in metas.iter().enumerate() {
             assert_eq!(meta.size, 644520, "disk{} size", i + 2);
-            assert_eq!(meta.etag, "9587ddd31fead633830366f45d221d56", "disk{} etag", i + 2);
+            assert_eq!(
+                meta.etag,
+                "9587ddd31fead633830366f45d221d56",
+                "disk{} etag",
+                i + 2
+            );
         }
 
         // Verify the version grouping: disk2+disk3 have same version, disk4+disk5 have same version

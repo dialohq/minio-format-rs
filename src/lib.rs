@@ -23,17 +23,17 @@
 //! let data = decode_object(&reader, &meta, &[])?;
 //! ```
 
-pub mod types;
-pub mod xlmeta;
+pub mod erasure;
 pub mod format;
 pub mod shard;
-pub mod erasure;
+pub mod types;
+pub mod xlmeta;
 
 // Re-exports for convenient access
+pub use erasure::{decode_object, FsShardReader, ShardReader};
+pub use format::{build_cluster_config, parse_format, DiskFormat, XLFormat};
+pub use shard::{read_shard_all_blocks, read_shard_block, shard_path, HASH_SIZE};
 pub use types::{
     ceil_div, ClusterConfig, DiskInfo, ObjectMeta, PartMeta, PoolConfig, Uuid16, VersionType,
 };
 pub use xlmeta::parse as parse_xlmeta;
-pub use format::{build_cluster_config, parse_format, DiskFormat, XLFormat};
-pub use shard::{read_shard_all_blocks, read_shard_block, shard_path, HASH_SIZE};
-pub use erasure::{decode_object, FsShardReader, ShardReader};

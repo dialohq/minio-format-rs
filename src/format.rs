@@ -165,14 +165,23 @@ mod tests {
         assert_eq!(cluster.pools[0].sets[0].len(), 4);
 
         // Verify device_id is set for the disks we provided
-        let disk_a = cluster.pools[0].sets[0].iter().find(|d| d.uuid == "disk-a").unwrap();
+        let disk_a = cluster.pools[0].sets[0]
+            .iter()
+            .find(|d| d.uuid == "disk-a")
+            .unwrap();
         assert_eq!(disk_a.device_id, Some(0));
 
-        let disk_b = cluster.pools[0].sets[0].iter().find(|d| d.uuid == "disk-b").unwrap();
+        let disk_b = cluster.pools[0].sets[0]
+            .iter()
+            .find(|d| d.uuid == "disk-b")
+            .unwrap();
         assert_eq!(disk_b.device_id, Some(1));
 
         // disk-c and disk-d were not provided, so device_id should be None
-        let disk_c = cluster.pools[0].sets[0].iter().find(|d| d.uuid == "disk-c").unwrap();
+        let disk_c = cluster.pools[0].sets[0]
+            .iter()
+            .find(|d| d.uuid == "disk-c")
+            .unwrap();
         assert_eq!(disk_c.device_id, None);
     }
 }
