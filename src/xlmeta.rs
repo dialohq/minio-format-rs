@@ -929,9 +929,11 @@ mod tests {
     }
 
     /// Test that cicd-corpus disks have consistent erasure coding config.
+    ///
     /// Note: The cicd-corpus contains disks with different object versions:
     /// - disk2/disk3: older version (50051050-62bc-4928-...)
     /// - disk4/disk5: newer version (163c7c9d-e856-41ed-...)
+    ///
     /// But erasure config, size, and etag remain consistent.
     #[test]
     fn test_parse_cicd_corpus_consistency() {

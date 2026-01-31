@@ -292,11 +292,13 @@ mod tests {
 
     #[test]
     fn test_object_meta_data_dir_string() {
-        let mut meta = ObjectMeta::default();
-        meta.data_dir = Uuid16([
-            0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66,
-            0x77, 0x88,
-        ]);
+        let meta = ObjectMeta {
+            data_dir: Uuid16([
+                0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66,
+                0x77, 0x88,
+            ]),
+            ..Default::default()
+        };
         assert_eq!(
             meta.data_dir_string(),
             "12345678-9abc-def0-1122-334455667788"
